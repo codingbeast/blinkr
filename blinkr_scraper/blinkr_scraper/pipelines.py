@@ -4,7 +4,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 class FireStoreScraperPipeline:
-    def __init__(self, local_path=r"C:\Users\raj\Desktop\blinkr\blinkr-6df7a-firebase-adminsdk-fbsvc-9e1e1e510c.json"):
+    def __init__(self, local_path=r"../firebase.json"):
         if not firebase_admin._apps:
             firebase_json = os.environ.get("FIREBASE_JSON")
             if firebase_json:

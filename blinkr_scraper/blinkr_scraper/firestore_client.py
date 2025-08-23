@@ -11,7 +11,7 @@ class FirestoreClient:
     _db = None
 
     @classmethod
-    def get_db(cls, local_path=r"C:\Users\raj\Desktop\blinkr\blinkr-6df7a-firebase-adminsdk.json"):
+    def get_db(cls, local_path=r"../firebase.json"):
         """
         Initialize Firestore client. First check FIREBASE_JSON env variable, 
         if not present, use local file.
