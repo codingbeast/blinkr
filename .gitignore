@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 blinkr-6df7a-firebase-adminsdk-fbsvc-9e1e1e510c.json
+firebase.json
 # C extensions
 *.so
 
