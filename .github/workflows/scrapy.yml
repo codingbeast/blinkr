@@ -38,6 +38,7 @@ jobs:
         FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 
     - name: Run Scrapy Spider
+      working-directory: blinkr_scraper   # important: go inside your Scrapy project
       env:
-        GOOGLE_APPLICATION_CREDENTIALS: firebase.json
+        GOOGLE_APPLICATION_CREDENTIALS: ../firebase.json
       run: scrapy crawl econ_times
