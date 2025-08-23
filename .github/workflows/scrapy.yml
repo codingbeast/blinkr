@@ -33,7 +33,7 @@ jobs:
 
     - name: Setup Firebase credentials
       run: |
-        echo "${{ secrets.FIREBASE_JSON }}" > firebase.json
+        printf "%s" "${{ secrets.FIREBASE_JSON }}" > firebase.json
       env:
         FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 
