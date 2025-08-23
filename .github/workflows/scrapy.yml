@@ -1,0 +1,43 @@
+name: Scrapy Crawl
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install scrapy firebase-admin transformers torch beautifulsoup4 lxml itemadapter
+
+    - name: Cache Hugging Face transformers
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/huggingface/transformers
+        key: ${{ runner.os }}-huggingface-transformers
+        restore-keys: |
+          ${{ runner.os }}-huggingface-transformers
+
+    - name: Setup Firebase credentials
+      run: |
+        echo "${{ secrets.FIREBASE_JSON }}" > firebase.json
+      env:
+        FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
+
+    - name: Run Scrapy Spider
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: firebase.json
+      run: scrapy crawl econ_times

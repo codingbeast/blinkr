@@ -2,16 +2,28 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import re
 
+import firebase_admin
+from firebase_admin import credentials, firestore
+import os
+import json
+
 class FirestoreClient:
     _db = None
 
     @classmethod
-    def get_db(cls):
+    def get_db(cls, local_path=r"C:\Users\raj\Desktop\blinkr\blinkr-6df7a-firebase-adminsdk.json"):
+        """
+        Initialize Firestore client. First check FIREBASE_JSON env variable, 
+        if not present, use local file.
+        """
         if cls._db is None:
             if not firebase_admin._apps:
-                cred = credentials.Certificate(
-                    r"C:\Users\raj\Desktop\blinkr\blinkr-6df7a-firebase-adminsdk-fbsvc-9e1e1e510c.json"
-                )
+                firebase_json = os.environ.get("FIREBASE_JSON")
+                if firebase_json:
+                    cred_dict = json.loads(firebase_json)
+                    cred = credentials.Certificate(cred_dict)
+                else:
+                    cred = credentials.Certificate(local_path)
                 firebase_admin.initialize_app(cred)
             cls._db = firestore.client()
         return cls._db
