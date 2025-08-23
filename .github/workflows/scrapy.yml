@@ -37,8 +37,13 @@ jobs:
       env:
         FIREBASE_JSON: ${{ secrets.FIREBASE_JSON }}
 
-    - name: Run Scrapy Spider
+    - name: Run Scrapy Spider for econ_times
       working-directory: blinkr_scraper   # important: go inside your Scrapy project
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ../firebase.json
       run: scrapy crawl econ_times
+    - name: Run Scrapy Spider for moneycontrol
+      working-directory: blinkr_scraper   # important: go inside your Scrapy project
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ../firebase.json
+      run: scrapy crawl moneycontrol

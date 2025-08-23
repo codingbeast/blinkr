@@ -1,1 +1,2 @@
 scrapy crawl econ_times
+scrapy crawl moneycontrol
