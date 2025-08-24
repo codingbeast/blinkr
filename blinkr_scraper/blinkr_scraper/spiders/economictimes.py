@@ -24,7 +24,7 @@ class EconTimesSpider(scrapy.Spider):
             for i in soup.find_all("url")
             if not any(keyword in i.find("loc").text for keyword in self.exclude_keywords)
         ]
-        existing_urls = FirestoreClient.get_existing_urls()
+        existing_urls = FirestoreClient.get_existing_urls(source="Economic Times", limit=len(urls))
         # Crawl the third URL as in your example; expand as needed
         for url in urls:
             if url not in existing_urls:  # skip already scraped

@@ -29,9 +29,17 @@ class FirestoreClient:
         return cls._db
 
     @classmethod
-    def get_existing_urls(cls):
+    def get_existing_urls(cls, source= None,limit=100):
         db = cls.get_db()
-        return {doc.to_dict().get("url") for doc in db.collection("articles").stream() if "url" in doc.to_dict()}
+        docs = (
+            db.collection("articles")
+            .where("source", "==", source)
+            .order_by("scraped_at", direction=firestore.Query.DESCENDING)  # newest first
+            .select(["url"])  # fetch only the url field
+            .limit(limit)
+            .stream()
+        )
+        return {doc.to_dict()["url"] for doc in docs if "url" in doc.to_dict()}
 
 
 def summarize_to_60_words(article,summarizer, max_chunk_chars=2000,):
