@@ -16,16 +16,15 @@ class FireStoreScraperPipeline:
         
         self.db = firestore.client()
         # Optional: cache existing URLs to speed up checking
-        self.existing_urls = {
-            doc.to_dict().get("url") for doc in self.db.collection("articles").stream()
-            if "url" in doc.to_dict()
-        }
+        self.existing_urls = []
         
     def process_item(self, item, spider):
         if item["url"] not in self.existing_urls:
-            self.db.collection("articles").document().set(item)
+            doc_ref = self.db.collection("articles").document(item["url"])
+            try:
+                doc_ref.create(item)  # only creates if not exists
+                spider.logger.info(f"Saved: {item['url']}")
+            except Exception:
+                spider.logger.info(f"Already exists, skipping {item['url']}")
             self.existing_urls.add(item["url"])
-            spider.logger.info(f"Saved: {item['url']}")
-        else:
-            spider.logger.info(f"Skipped (already exists): {item['url']}")
         return item
