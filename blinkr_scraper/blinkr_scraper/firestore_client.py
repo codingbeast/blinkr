@@ -1,46 +1,12 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 import re
-
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 import firebase_admin
 from firebase_admin import credentials, firestore
 import os
 import json
-
-class FirestoreClient:
-    _db = None
-
-    @classmethod
-    def get_db(cls, local_path=r"../firebase.json"):
-        """
-        Initialize Firestore client. First check FIREBASE_JSON env variable, 
-        if not present, use local file.
-        """
-        if cls._db is None:
-            if not firebase_admin._apps:
-                firebase_json = os.environ.get("FIREBASE_JSON")
-                if firebase_json:
-                    cred_dict = json.loads(firebase_json)
-                    cred = credentials.Certificate(cred_dict)
-                else:
-                    cred = credentials.Certificate(local_path)
-                firebase_admin.initialize_app(cred)
-            cls._db = firestore.client()
-        return cls._db
-
-    @classmethod
-    def get_existing_urls(cls, source= None,limit=100):
-        db = cls.get_db()
-        docs = (
-            db.collection("articles")
-            .where("source", "==", source)
-            .order_by("scraped_at", direction=firestore.Query.DESCENDING)  # newest first
-            .select(["url"])  # fetch only the url field
-            .limit(limit)
-            .stream()
-        )
-        return {doc.to_dict()["url"] for doc in docs if "url" in doc.to_dict()}
-
 
 def summarize_to_60_words(article,summarizer, max_chunk_chars=2000,):
     """
@@ -92,3 +58,9 @@ def slugify(title: str) -> str:
     title = re.sub(r'[\s-]+', '-', title)
     # Trim leading/trailing hyphens
     return title.strip('-')
+
+def get_2_hours_time():
+        ist = ZoneInfo("Asia/Kolkata")  # IST timezone
+        now_ist = datetime.now(tz=ist)
+        time_window = timedelta(hours=2)
+        return time_window, now_ist, ist

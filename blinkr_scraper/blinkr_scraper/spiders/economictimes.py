@@ -2,7 +2,7 @@ import re
 import warnings
 import scrapy
 from bs4 import BeautifulSoup
-from blinkr_scraper.firestore_client import FirestoreClient,summarize_to_60_words, slugify
+from blinkr_scraper.firestore_client import summarize_to_60_words, slugify, get_2_hours_time
 from transformers import pipeline
 from datetime import datetime
 
@@ -19,22 +19,21 @@ class EconTimesSpider(scrapy.Spider):
 
     def parse(self, response):
         soup = BeautifulSoup(response.text, 'xml')
+        time_window, now_ist, ist = get_2_hours_time()
         urls = [
-            i.find("loc").text
-            for i in soup.find_all("url")
-            if not any(keyword in i.find("loc").text for keyword in self.exclude_keywords)
-        ]
-        existing_urls = FirestoreClient.get_existing_urls(source="Economic Times", limit=len(urls))
+                    i.find("loc").text
+                    for i in soup.find_all("url")
+                    if not any(keyword in i.find("loc").text for keyword in self.exclude_keywords)
+                    and i.find("news:publication_date")
+                    and datetime.fromisoformat(i.find("news:publication_date").text).astimezone(ist) >= now_ist - time_window
+                ]
         # Crawl the third URL as in your example; expand as needed
         for url in urls:
-            if url not in existing_urls:  # skip already scraped
-                category = self.get_category(url)
-                allowed_categories = ["markets", "industry", "tech","wealth","small-biz","mf","ai"]
-                if category in allowed_categories:
-                    yield scrapy.Request(url, callback=self.parse_article)
-                    #break
-            else:
-                self.logger.info(f"Skipping already scraped URL: {url}")
+            category = self.get_category(url)
+            allowed_categories = ["markets", "industry", "tech","wealth","small-biz","mf","ai"]
+            if category in allowed_categories:
+                yield scrapy.Request(url, callback=self.parse_article)
+                #break
             #break
     def get_category(self, url, is_store = False):
         category_match = re.search(r".com/(.*?)/", url)

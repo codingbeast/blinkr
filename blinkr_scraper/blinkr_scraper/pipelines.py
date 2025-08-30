@@ -1,5 +1,6 @@
 import json
 import os
+import hashlib
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -19,12 +20,13 @@ class FireStoreScraperPipeline:
         self.existing_urls = []
         
     def process_item(self, item, spider):
-        if item["url"] not in self.existing_urls:
-            doc_ref = self.db.collection("articles").document(item["url"])
+        doc_id = hashlib.sha256(item["url"].encode()).hexdigest()
+        if doc_id not in self.existing_urls:
+            doc_ref = self.db.collection("articles").document(doc_id)
             try:
                 doc_ref.create(item)  # only creates if not exists
                 spider.logger.info(f"Saved: {item['url']}")
             except Exception:
                 spider.logger.info(f"Already exists, skipping {item['url']}")
-            self.existing_urls.add(item["url"])
+            self.existing_urls.append(doc_id)
         return item
