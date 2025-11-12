@@ -62,6 +62,7 @@ class moneyControlSpider(scrapy.Spider):
         category = self.get_category(response.url,self.allowed_categories, is_store=True)
         img = soup.find("meta", {"property" : "og:image"}).get("content","")
         keywords = soup.find("meta", {"name" : "news_keywords"}).get("content", "")
+        keywords = [tag.strip().lower() for tag in keywords.split(",")] if isinstance(keywords, str) else [t.lower() for t in keywords]
         #description = soup.find("meta", {"name" : "description"}).get("content", "")
         published_at = self.extract_published_at(soup)
         article_tag = soup.find("div", {"id" : "contentdata"})
@@ -76,15 +77,17 @@ class moneyControlSpider(scrapy.Spider):
         
         yield {
             "title": title,
-            "img" : img,
+            "img" : img if img and img.startswith("http") else None,
             "tags" : keywords,
             "slug" : slugify(title),
-            "category": category,
+            "category": category.strip().lower() if category else None,
             "source" : "moneycontrol",
             "content": summary_text,
-            "url": response.url,
+            "url": response.url.strip(),
             "published_at" : date_parser.parse(published_at), #published_at,
             "scraped_at" : datetime.datetime.utcnow(), #datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+            "word_count": len(summary_text.split()) if summary_text else 0,
+            "char_count": len(summary_text) if summary_text else 0,
             "author" : "blinkr",
             "language" : "en",
             "enabled" : True
