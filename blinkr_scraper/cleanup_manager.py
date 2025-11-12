@@ -3,6 +3,7 @@ import json
 import datetime
 import firebase_admin
 from firebase_admin import credentials, firestore
+from google.cloud.firestore_v1.base_query import FieldFilter
 
 class FirestoreCleanupManager:
     def __init__(self, local_path=r"../firebase.json"):
@@ -25,7 +26,7 @@ class FirestoreCleanupManager:
 
         try:
             articles_ref = self.db.collection("articles")
-            old_docs = articles_ref.where(filter=("scraped_at", "<", cutoff)).stream()
+            old_docs = articles_ref.where(filter=FieldFilter("scraped_at", "<", cutoff)).stream()
 
             batch = self.db.batch()
             count = 0
