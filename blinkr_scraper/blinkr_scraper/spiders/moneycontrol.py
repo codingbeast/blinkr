@@ -4,7 +4,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from blinkr_scraper.firestore_client import summarize_to_60_words, slugify, get_2_hours_time
 from transformers import pipeline
-from datetime import datetime
+from datetime import datetime, timezone
 from dateutil import parser as date_parser, tz
 
 class moneyControlSpider(scrapy.Spider):
@@ -85,7 +85,7 @@ class moneyControlSpider(scrapy.Spider):
             "content": summary_text,
             "url": response.url.strip(),
             "published_at" : date_parser.parse(published_at), #published_at,
-            "scraped_at" : datetime.datetime.utcnow(), #datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+            "scraped_at" : datetime.now(timezone.utc), #datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "word_count": len(summary_text.split()) if summary_text else 0,
             "char_count": len(summary_text) if summary_text else 0,
             "author" : "blinkr",
