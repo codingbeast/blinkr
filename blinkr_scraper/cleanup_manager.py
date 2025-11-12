@@ -5,7 +5,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 class FirestoreCleanupManager:
-    def __init__(self, local_path=r"firebase.json"):
+    def __init__(self, local_path=r"../firebase.json"):
         """Initialize Firebase client using either env or local file."""
         if not firebase_admin._apps:
             firebase_json = os.environ.get("FIREBASE_JSON")
@@ -47,5 +47,5 @@ class FirestoreCleanupManager:
 
 
 if __name__ == "__main__":
-    manager = FirestoreCleanupManager(local_path="firebase.json")
+    manager = FirestoreCleanupManager()
     manager.delete_old_articles(days=30)
