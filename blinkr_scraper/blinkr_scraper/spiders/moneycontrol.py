@@ -83,7 +83,7 @@ class moneyControlSpider(scrapy.Spider):
             "content": summary_text,
             "url": response.url,
             "published_at" : published_at,
-            "scraped_at" : datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+            "scraped_at" : datetime.datetime.utcnow(), #datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "author" : "blinkr",
             "language" : "en",
             "enabled" : True
