@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install scrapy firebase-admin transformers torch beautifulsoup4 lxml itemadapter
+        pip install scrapy firebase-admin transformers torch beautifulsoup4 lxml itemadapter python-dateutil
 
     - name: Cache Hugging Face transformers
       uses: actions/cache@v3
