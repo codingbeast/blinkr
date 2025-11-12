@@ -35,4 +35,4 @@ jobs:
         env:
           # Make the decoded service account available to the Admin SDK
           GOOGLE_APPLICATION_CREDENTIALS: ../firebase.json
-        run: python cleanup_runner.py
+        run: python cleanup_manager.py
