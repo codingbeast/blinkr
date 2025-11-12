@@ -44,3 +44,8 @@ class FirestoreCleanupManager:
             print(f"✅ Deleted {count} old articles in total.")
         except Exception as e:
             print(f"⚠️ Cleanup failed: {e}")
+
+
+if __name__ == "__main__":
+    manager = FirestoreCleanupManager(local_path="firebase.json")
+    manager.delete_old_articles(days=30)
