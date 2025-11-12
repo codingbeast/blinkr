@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from blinkr_scraper.firestore_client import summarize_to_60_words, slugify, get_2_hours_time
 from transformers import pipeline
 from datetime import datetime
+from dateutil import parser as date_parser, tz
 
 class EconTimesSpider(scrapy.Spider):
     name = "econ_times"
@@ -82,7 +83,7 @@ class EconTimesSpider(scrapy.Spider):
             "source" : "Economic Times",
             "content": summary_text,
             "url": response.url,
-            "published_at" : published_at,
+            "published_at" : date_parser.parse(published_at), #published_at,
             "scraped_at" : datetime.datetime.utcnow(), #datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "author" : "blinkr",
             "language" : "en",
