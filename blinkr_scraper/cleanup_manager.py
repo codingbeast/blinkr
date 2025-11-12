@@ -25,7 +25,7 @@ class FirestoreCleanupManager:
 
         try:
             articles_ref = self.db.collection("articles")
-            old_docs = articles_ref.where("scraped_at", "<", cutoff).stream()
+            old_docs = articles_ref.where(filter=("scraped_at", "<", cutoff)).stream()
 
             batch = self.db.batch()
             count = 0
