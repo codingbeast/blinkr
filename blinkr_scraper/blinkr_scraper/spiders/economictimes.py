@@ -34,8 +34,8 @@ class EconTimesSpider(scrapy.Spider):
             allowed_categories = ["markets", "industry", "tech","wealth","small-biz","mf","ai"]
             if category in allowed_categories:
                 yield scrapy.Request(url, callback=self.parse_article)
-                #break
-            #break
+                # break
+            # break
     def get_category(self, url, is_store = False):
         category_match = re.search(r".com/(.*?)/", url)
         category = category_match.group(1) if category_match else ""
